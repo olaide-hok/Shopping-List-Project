@@ -2,6 +2,7 @@ const itemForm = document.getElementById('item-form')
 const itemInput = document.getElementById('item-input')
 const itemList = document.getElementById('item-list')
 const clearBtn = document.getElementById('clear')
+const itemFilter = document.getElementById('filter')
 
 function addItem(e) {
     e.preventDefault()
@@ -21,8 +22,13 @@ function addItem(e) {
     const button = createButton('remove-item btn-link text-red')
     li.appendChild(button)
 
+    // Add li item to list in the DOM
     itemList.appendChild(li)
 
+    // Check if items are present.
+    checkUI()
+
+    // Set input field to empty string
     itemInput.value = ''
 }
 
@@ -46,14 +52,33 @@ function createIcon(classes) {
 function removeItem(e) {
     // Event delegation
     if (e.target.parentElement.classList.contains('remove-item')) {
-        e.target.parentElement.parentElement.remove()
+        if (confirm('Are you sure you want to remove item?')) {
+            e.target.parentElement.parentElement.remove()
+            checkUI()
+        }
     }
 }
 
 // Clear the shopping list
 function clearItems() {
-    while (itemList.firstChild) {
-        itemList.removeChild(itemList.firstChild)
+    if (confirm('Are you sure you want to clear all items?')) {
+        while (itemList.firstChild) {
+            itemList.removeChild(itemList.firstChild)
+        }
+        checkUI()
+    }
+}
+
+// Remove filter and clear all button from UI when list items is empty
+function checkUI() {
+    const items = itemList.querySelectorAll('li')
+
+    if (items.length === 0) {
+        clearBtn.style.display = 'none'
+        itemFilter.style.display = 'none'
+    } else {
+        clearBtn.style.display = 'block'
+        itemFilter.style.display = 'block'
     }
 }
 
@@ -61,3 +86,5 @@ function clearItems() {
 itemForm.addEventListener('submit', addItem)
 itemList.addEventListener('click', removeItem)
 clearBtn.addEventListener('click', clearItems)
+
+checkUI()
