@@ -117,6 +117,7 @@ header h1 {
     padding: 10px 15px;
     margin: 0 5px 20px;
     font-weight: 700;
+    text-transform: capitalize;
 }
 
 @media (max-width: 500px) {
