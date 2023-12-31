@@ -4,6 +4,12 @@ const itemList = document.getElementById('item-list')
 const clearBtn = document.getElementById('clear')
 const itemFilter = document.getElementById('filter')
 
+function displayItems() {
+    const itemsFromStorage = getItemsFromStorage()
+    itemsFromStorage.forEach((item) => addItemToDOM(item))
+    checkUI()
+}
+
 function onAddItemSubmit(e) {
     e.preventDefault()
 
@@ -40,24 +46,6 @@ function addItemToDOM(item) {
     itemList.appendChild(li)
 }
 
-// Add Item to Local Storage
-function addItemToStorage(item) {
-    let itemsFromStorage
-
-    // Check if item already exists in local storage
-    if (localStorage.getItem('items') == null) {
-        itemsFromStorage = []
-    } else {
-        itemsFromStorage = JSON.parse(localStorage.getItem('items'))
-    }
-
-    // Add new item to array
-    itemsFromStorage.push(item)
-
-    // Convert to JSON string and store/set in local storage
-    localStorage.setItem('items', JSON.stringify(itemsFromStorage))
-}
-
 // Create Button Function
 function createButton(classes) {
     const button = document.createElement('button')
@@ -72,6 +60,31 @@ function createIcon(classes) {
     const icon = document.createElement('i')
     icon.className = classes
     return icon
+}
+
+// Add Item to Local Storage
+function addItemToStorage(item) {
+    let itemsFromStorage = getItemsFromStorage()
+
+    // Add new item to array
+    itemsFromStorage.push(item)
+
+    // Convert to JSON string and store/set in local storage
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage))
+}
+
+// Get all items from local storage
+function getItemsFromStorage() {
+    let itemsFromStorage
+
+    // Check if item already exists in local storage
+    if (localStorage.getItem('items') == null) {
+        itemsFromStorage = []
+    } else {
+        itemsFromStorage = JSON.parse(localStorage.getItem('items'))
+    }
+
+    return itemsFromStorage
 }
 
 // Remove item from the list
@@ -124,10 +137,16 @@ function checkUI() {
     }
 }
 
-// Event Listeners
-itemForm.addEventListener('submit', onAddItemSubmit)
-itemList.addEventListener('click', removeItem)
-clearBtn.addEventListener('click', clearItems)
-itemFilter.addEventListener('input', filterItems)
+// Initialize App
+function init() {
+    // Event Listeners
+    itemForm.addEventListener('submit', onAddItemSubmit)
+    itemList.addEventListener('click', removeItem)
+    clearBtn.addEventListener('click', clearItems)
+    itemFilter.addEventListener('input', filterItems)
+    document.addEventListener('DOMContentLoaded', displayItems)
 
-checkUI()
+    checkUI()
+}
+
+init()
