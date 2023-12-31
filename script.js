@@ -13,7 +13,7 @@ function displayItems() {
 function onAddItemSubmit(e) {
     e.preventDefault()
 
-    const newItem = itemInput.value
+    const newItem = itemInput.value.trim()
 
     // Validate Input Field
     if (newItem === '') {
@@ -87,15 +87,35 @@ function getItemsFromStorage() {
     return itemsFromStorage
 }
 
-// Remove item from the list
-function removeItem(e) {
+function onClickItem(e) {
     // Event delegation
     if (e.target.parentElement.classList.contains('remove-item')) {
-        if (confirm('Are you sure you want to remove item?')) {
-            e.target.parentElement.parentElement.remove()
-            checkUI()
-        }
+        removeItem(e.target.parentElement.parentElement)
     }
+}
+
+// Remove item from the list
+function removeItem(item) {
+    if (confirm('Are you sure you want to remove item?')) {
+        // Remove the item from the list in the DOM
+        item.remove()
+
+        // Remove the item from local storage
+        removeItemFromStorage(item.textContent)
+
+        // Update the UI
+        checkUI()
+    }
+}
+
+function removeItemFromStorage(item) {
+    let itemsFromStorage = getItemsFromStorage()
+
+    // Filter out item to be removed
+    itemsFromStorage = itemsFromStorage.filter((i) => i !== item)
+
+    // Re-set to local storage
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage))
 }
 
 // Clear the shopping list
@@ -104,6 +124,10 @@ function clearItems() {
         while (itemList.firstChild) {
             itemList.removeChild(itemList.firstChild)
         }
+
+        // Clear all items from local storage
+        localStorage.removeItem('items')
+
         checkUI()
     }
 }
@@ -141,7 +165,7 @@ function checkUI() {
 function init() {
     // Event Listeners
     itemForm.addEventListener('submit', onAddItemSubmit)
-    itemList.addEventListener('click', removeItem)
+    itemList.addEventListener('click', onClickItem)
     clearBtn.addEventListener('click', clearItems)
     itemFilter.addEventListener('input', filterItems)
     document.addEventListener('DOMContentLoaded', displayItems)
