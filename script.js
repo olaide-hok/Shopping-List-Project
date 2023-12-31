@@ -23,13 +23,18 @@ function onAddItemSubmit(e) {
         return
     }
 
-    // Check for edit mode
+    // Check if in edit mode or item already exists in local storage.
     if (isEditMode) {
         const itemToEdit = itemList.querySelector('.edit-mode')
         removeItemFromStorage(itemToEdit.textContent)
         itemToEdit.classList.remove('edit-mode')
         itemToEdit.remove()
         isEditMode = false
+    } else {
+        if (checkIfItemExists(newItem)) {
+            alert(`${newItem} already exists!`)
+            return
+        }
     }
 
     // Create item DOM element
@@ -106,6 +111,12 @@ function onClickItem(e) {
     } else {
         setItemToEdit(e.target)
     }
+}
+
+// Check if item already exists in the list
+function checkIfItemExists(item) {
+    const itemsFromStorage = getItemsFromStorage()
+    return itemsFromStorage.includes(item)
 }
 
 // Set item to edit mode
